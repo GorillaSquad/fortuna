@@ -80,22 +80,11 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
 
-        Log.d(TAG,  FirebaseInstanceId.getInstance().getId());
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInAnonymously:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            new WebHelper().execute("GET","Login.php?deviceID="+user.getUid()+"&token="+FirebaseInstanceId.getInstance().getToken());
-                        } else {
-                            Log.w(TAG, "signInAnonymously:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        // LOGIN
+        StartUp start = new StartUp(this);
+        start.start();
+
+        //END OF LOGIN
     }
 }
