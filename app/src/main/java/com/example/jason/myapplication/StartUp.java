@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.jason.myapplication.containers.Matches;
 import com.example.jason.myapplication.helpers.WebHelper;
 import com.example.jason.myapplication.network.Account;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +48,7 @@ public class StartUp {
     }
 
     public void loginAccount(String accountID) {
+        Log.w(TAG, "logging in " + accountID);
         Account myAccount = new Account(accountID);
         myAccount.login();
     }

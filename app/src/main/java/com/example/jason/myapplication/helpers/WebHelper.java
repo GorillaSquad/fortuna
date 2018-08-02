@@ -14,6 +14,14 @@ import java.util.HashMap;
 
 public class WebHelper  extends AsyncTask<String, Void, String> {
 
+
+    public WebHelper(){
+    }
+
+    protected void onPostExecute(String result){
+        super.onPostExecute(result);
+    }
+
     public static void POST(String page, HashMap<String,String> values){
 
     }
@@ -34,8 +42,6 @@ public class WebHelper  extends AsyncTask<String, Void, String> {
                 result.append(line);
             }
             rd.close();
-
-            Log.d("WebHelper", result.toString());
             return result.toString();
         }catch (Exception e){
             Log.d("WebHelper", e.toString());
