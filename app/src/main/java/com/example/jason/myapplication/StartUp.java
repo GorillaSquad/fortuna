@@ -51,5 +51,7 @@ public class StartUp {
         Log.w(TAG, "logging in " + accountID);
         Account myAccount = new Account(accountID);
         myAccount.login();
+        myAccount.joinQueue();
+        Log.w(TAG, "logging in " + myAccount.isInQueue());
     }
 }

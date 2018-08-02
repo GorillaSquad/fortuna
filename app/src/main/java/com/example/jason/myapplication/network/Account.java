@@ -57,4 +57,17 @@ public class Account {
     public void leaveQueue() {
         new WebHelper().execute("GET","QueueManager.php?deviceID="+id+"&command=remove");
     }
+
+    public boolean isInQueue() {
+        String result = "";
+        try {
+            result = new WebHelper().execute("GET","UserManager.php?deviceID=" + id + "&command=isInQueue").get();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(result.equals("1"))
+            return true;
+        else
+            return false;
+    }
 }
