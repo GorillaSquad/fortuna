@@ -1,5 +1,7 @@
 package com.example.jason.myapplication;
 
+import com.example.jason.myapplication.network.Account;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jason.myapplication.helpers.WebHelper;
@@ -28,16 +31,30 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
 
-    public void testNotificationClick(View v){
+    public void testNotificationClick(View v) {
         Random rand = new Random();
         int x = (rand.nextInt(99999) + 1);
         sendNotification("Updated Notification", "This keeps updating! " + x, 234528947,"DEBUG_NOTIFICATION");
     }
 
-    public void testNewNotificationClick(View v){
+    public void testNewNotificationClick(View v) {
         Random rand = new Random();
         int x = (rand.nextInt(99999) + 1);
         sendNotification("New Notification", "This is a new notification! ID: " + x, x,"DEBUG_NOTIFICATION");
+    }
+
+    public void startQueue(View v) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Account myAccount = new Account(user.getUid());
+        myAccount.joinQueue();
+        Log.d("Start Complete", "Search Started");
+    }
+
+    public void stopQueue(View v) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Account myAccount = new Account(user.getUid());
+        myAccount.leaveQueue();
+        Log.d("Stop Complete", "Search Stopped");
     }
 
     public void sendNotification(String textTitle, String textContent, int notificationID, String channelID){
