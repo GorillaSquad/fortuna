@@ -1,6 +1,10 @@
 package com.example.jason.myapplication;
 
 import com.example.jason.myapplication.network.Account;
+
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -51,35 +55,30 @@ public class MainActivity extends AppCompatActivity {
 
     boolean joinPress;
     public void startQueue(View v) {
+
+        int colorStart = 0xFF99CC00;
+        int colorEnd = 0xFFEC1F43;
+        ValueAnimator queueAnimation = ObjectAnimator.ofInt(v,
+                "backgroundColor", colorStart, colorEnd);
+        queueAnimation.setDuration(1000);
+        queueAnimation.setEvaluator(new ArgbEvaluator());
+
+
         Button queueBtn = (Button)findViewById(R.id.joinBtn);
-
-
-        if (!myAccount.isInQueue()) {
-            queueBtn.setBackgroundColor(0xFFEC1F43);
-            myAccount.joinQueue();
-            queueBtn.setText("In Queue!");
-            Log.d("queueJoined", "Joined");
-        } else {
-            myAccount.leaveQueue();
-            queueBtn.setText("Join");
-            queueBtn.setBackgroundColor(0xFF99CC00);
-            Log.d("Queue Left", "Left");
-        }
-        /*
         myAccount.joinQueue();
+
         if (myAccount.isInQueue() && !joinPress) {
+            queueAnimation.start();
             queueBtn.setText("In Queue!");
-            queueBtn.setBackgroundColor(0xFFEC1F43);
             joinPress = true;
             Log.d("queueJoined", "Joined");
         } else if (joinPress) {
             myAccount.leaveQueue();
             queueBtn.setText("Join");
-            queueBtn.setBackgroundColor(0xFF99CC00);
+            queueAnimation.reverse();
             joinPress = false;
             Log.d("Queue Left", "Left");
         }
-        */
     }
 
     public void sendNotification(String textTitle, String textContent, int notificationID, String channelID) {
