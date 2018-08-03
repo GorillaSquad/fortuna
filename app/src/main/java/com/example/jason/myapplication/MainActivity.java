@@ -22,12 +22,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.inmobi.sdk.InMobiSdk;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = "MainActivity";
-    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private Account myAccount;
 
     public void testNotificationClick(View v) {
         Random rand = new Random();
@@ -44,10 +52,21 @@ public class MainActivity extends AppCompatActivity {
     boolean joinPress;
     public void startQueue(View v) {
         Button queueBtn = (Button)findViewById(R.id.joinBtn);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Account myAccount = new Account(user.getUid());
-        myAccount.joinQueue();
 
+
+        if (!myAccount.isInQueue()) {
+            queueBtn.setBackgroundColor(0xFFEC1F43);
+            myAccount.joinQueue();
+            queueBtn.setText("In Queue!");
+            Log.d("queueJoined", "Joined");
+        } else {
+            myAccount.leaveQueue();
+            queueBtn.setText("Join");
+            queueBtn.setBackgroundColor(0xFF99CC00);
+            Log.d("Queue Left", "Left");
+        }
+        /*
+        myAccount.joinQueue();
         if (myAccount.isInQueue() && !joinPress) {
             queueBtn.setText("In Queue!");
             queueBtn.setBackgroundColor(0xFFEC1F43);
@@ -60,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             joinPress = false;
             Log.d("Queue Left", "Left");
         }
+        */
     }
 
     public void sendNotification(String textTitle, String textContent, int notificationID, String channelID) {
@@ -101,10 +121,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        JSONObject consentObject = new JSONObject();
+        try {
+            // Provide correct consent value to sdk which is obtained by User
+            consentObject.put(InMobiSdk.IM_GDPR_CONSENT_AVAILABLE, false);
+            // Provide 0 if GDPR is not applicable and 1 if applicable
+            consentObject.put("gdpr", "0");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        InMobiSdk.init(this, "36567d23a95f40d286f3abf52bb96720", consentObject);
+
         // LOGIN
         StartUp start = new StartUp(this);
         start.start();
-
         //END OF LOGIN
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        myAccount = new Account(user.getUid());
     }
 }
