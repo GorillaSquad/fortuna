@@ -60,9 +60,8 @@ public class MainActivity extends AppCompatActivity {
         int colorEnd = 0xFFEC1F43;
         ValueAnimator queueAnimation = ObjectAnimator.ofInt(v,
                 "backgroundColor", colorStart, colorEnd);
-        queueAnimation.setDuration(1000);
+        queueAnimation.setDuration(100);
         queueAnimation.setEvaluator(new ArgbEvaluator());
-
 
         Button queueBtn = (Button)findViewById(R.id.joinBtn);
         myAccount.joinQueue();
@@ -73,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
             joinPress = true;
             Log.d("queueJoined", "Joined");
         } else if (joinPress) {
+            queueAnimation.reverse();
             myAccount.leaveQueue();
             queueBtn.setText("Join");
-            queueAnimation.reverse();
             joinPress = false;
             Log.d("Queue Left", "Left");
         }

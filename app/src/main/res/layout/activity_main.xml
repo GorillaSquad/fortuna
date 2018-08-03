@@ -9,8 +9,8 @@
     <Button
         android:id="@+id/joinBtn"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="52dp"
         android:background="@android:color/holo_green_light"
         android:onClick="startQueue"
         android:text="Join"
@@ -39,7 +39,7 @@
         android:id="@+id/newMsgBtn"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="180dp"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="36dp"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
@@ -52,26 +52,12 @@
         app:layout_constraintStart_toEndOf="@+id/updateBtn" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="168dp"
-        android:layout_height="171dp"
-        android:layout_marginTop="84dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/joinBtn"
-        app:srcCompat="@drawable/ic_happy" />
-
-    <TextView
-        android:id="@+id/textView"
+        android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="All Good!"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="#FFB9B9B9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_main_img"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
 </android.support.constraint.ConstraintLayout>
