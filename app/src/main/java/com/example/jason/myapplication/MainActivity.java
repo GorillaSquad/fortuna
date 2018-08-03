@@ -4,6 +4,7 @@ import com.example.jason.myapplication.network.Account;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -14,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.example.jason.myapplication.helpers.WebHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,14 +22,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
-
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = "MainActivity";
     private FirebaseAuth mAuth;
-
 
     public void testNotificationClick(View v) {
         Random rand = new Random();
@@ -43,21 +41,28 @@ public class MainActivity extends AppCompatActivity {
         sendNotification("New Notification", "This is a new notification! ID: " + x, x,"DEBUG_NOTIFICATION");
     }
 
+    boolean joinPress;
     public void startQueue(View v) {
+        Button queueBtn = (Button)findViewById(R.id.joinBtn);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Account myAccount = new Account(user.getUid());
         myAccount.joinQueue();
-        Log.d("Start Complete", "Search Started");
+
+        if (myAccount.isInQueue() && !joinPress) {
+            queueBtn.setText("In Queue!");
+            queueBtn.setBackgroundColor(0xFFEC1F43);
+            joinPress = true;
+            Log.d("queueJoined", "Joined");
+        } else if (joinPress) {
+            myAccount.leaveQueue();
+            queueBtn.setText("Join");
+            queueBtn.setBackgroundColor(0xFF99CC00);
+            joinPress = false;
+            Log.d("Queue Left", "Left");
+        }
     }
 
-    public void stopQueue(View v) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Account myAccount = new Account(user.getUid());
-        myAccount.leaveQueue();
-        Log.d("Stop Complete", "Search Stopped");
-    }
-
-    public void sendNotification(String textTitle, String textContent, int notificationID, String channelID){
+    public void sendNotification(String textTitle, String textContent, int notificationID, String channelID) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelID)
                 .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
                 .setContentTitle(textTitle)
@@ -87,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
             //TODO Test on lower sdk to make sure this doesn't need to be handled
         }
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
