@@ -19,7 +19,7 @@ public class ChatRoom extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chatroom);
+        setContentView(R.layout.chat_room);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.chatRecyclerView);
 
