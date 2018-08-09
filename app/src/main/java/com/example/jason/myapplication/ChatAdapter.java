@@ -1,18 +1,22 @@
 package com.example.jason.myapplication;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.jason.myapplication.containers.Chat;
 
 import org.w3c.dom.Text;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
-    private String[] mDataset;
+    private Chat.ChatMessage[] mDataset;
+    private String match;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         public View view;
         public ViewHolder(View v) {
             super(v);
@@ -20,7 +24,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
     }
 
-    public ChatAdapter(String[] myDataset) {
+    public ChatAdapter(Chat.ChatMessage[] myDataset, String match) {
+        updateData(myDataset);
+        this.match = match;
+    }
+
+    public Chat.ChatMessage[] getData(){
+        return mDataset;
+    }
+
+    public void updateData(Chat.ChatMessage[] myDataset) {
+        if(myDataset == null)
+            myDataset = new Chat.ChatMessage[0];
         mDataset = myDataset;
     }
 
@@ -42,8 +57,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         TextView textView = holder.view.findViewById(R.id.messageText);
-        textView.setText(mDataset[position]);
-
+        textView.setText(mDataset[position].message);
+        LinearLayout container = (LinearLayout) holder.view.findViewById(R.id.messageContainer);
+        if(!mDataset[position].from.equals(match)){
+            container.setGravity(Gravity.RIGHT);
+            textView.setBackgroundResource(R.drawable.message_bubble_send);
+        }else{
+            container.setGravity(Gravity.LEFT);
+            textView.setBackgroundResource(R.drawable.message_bubble);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

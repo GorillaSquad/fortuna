@@ -35,7 +35,7 @@ public class Account {
 
     // MESSAGING
     public Chat getChatWith(String other) {
-        Chat c = null;
+        Chat c = new Chat();
         Gson gson = new Gson();
         try {
             c = gson.fromJson(new WebHelper().execute("GET","GetMessages.php?from="+id+"&to="+other).get(), Chat.class);

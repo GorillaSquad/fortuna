@@ -1,5 +1,6 @@
 package com.example.jason.myapplication;
 
+import com.example.jason.myapplication.containers.Chat;
 import com.example.jason.myapplication.network.Account;
 
 import android.animation.ArgbEvaluator;
@@ -8,6 +9,10 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -33,6 +38,8 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private FirebaseUser user;
     private Account myAccount;
+    private MainActivity.MyBroadRequestReceiver receiver;
+
 
     public void testNotificationClick(View v) {
         Random rand = new Random();
@@ -135,7 +144,34 @@ public class MainActivity extends AppCompatActivity {
         start.start();
         //END OF LOGIN
 
+        IntentFilter filter = new IntentFilter("MatchFound");
+        receiver = new MainActivity.MyBroadRequestReceiver();
+        registerReceiver( receiver, filter);
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         myAccount = new Account(user.getUid());
+    }
+
+    @Override
+    public void onDestroy() {
+        this.unregisterReceiver(receiver);
+        super.onDestroy();
+    }
+
+
+    public class MyBroadRequestReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String match = intent.getStringExtra("match");
+            startChat(match);
+        }
+    }
+
+
+    public void startChat(String match){
+        Intent chatIntent = new Intent(this, ChatRoom.class);
+        chatIntent.putExtra("match", match);
+        Log.d(TAG, match);
+        startActivity(chatIntent);
     }
 }

@@ -32,6 +32,7 @@ public class WebHelper  extends AsyncTask<String, Void, String> {
 
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
             conn.setRequestMethod("GET");
 
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
