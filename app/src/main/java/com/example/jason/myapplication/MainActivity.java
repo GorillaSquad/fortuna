@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.example.jason.myapplication.helpers.WebHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.inmobi.ads.InMobiBanner;
 import com.inmobi.sdk.InMobiSdk;
 
 import org.json.JSONException;
@@ -138,6 +140,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         InMobiSdk.init(this, "36567d23a95f40d286f3abf52bb96720", consentObject);
+        InMobiBanner bannerAd = new InMobiBanner(this, 1531708574428L);
+
+        RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.banner);
+        RelativeLayout.LayoutParams bannerLp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        bannerLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bannerLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        adContainer.addView(bannerAd,bannerLp);
+        bannerAd.load();
 
         // LOGIN
         StartUp start = new StartUp(this);
