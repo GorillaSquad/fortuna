@@ -29,6 +29,10 @@ public class StartUp {
     public void start() {
         mAuth = FirebaseAuth.getInstance();
         firebaseLogin();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user != null)
+            loginAccount(user.getUid());
     }
 
     public void firebaseLogin() {

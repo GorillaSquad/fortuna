@@ -151,10 +151,6 @@ public class MainActivity extends AppCompatActivity {
         adContainer.addView(bannerAd,bannerLp);
         bannerAd.load();
 
-        // LOGIN
-        StartUp start = new StartUp(this);
-        start.start();
-        //END OF LOGIN
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -178,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = mAuth.getCurrentUser();
         myAccount = new Account(user.getUid());
+
+        // LOGIN
+        StartUp start = new StartUp(this);
+        start.start();
+        //END OF LOGIN
+
         SavedInfo.getInstance().load(this);
         Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
     }
@@ -186,8 +188,6 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
         SavedInfo.getInstance().EUConsent = true;
         SavedInfo.getInstance().save(this);
-
-        SavedInfo.getInstance().load(this);
     }
 
     @Override

@@ -83,6 +83,9 @@ public class ChatRoom extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        if(chat == null)
+            chat = new Chat();
+
         mAdapter = new ChatAdapter(chat.messages, match);
         mRecyclerView.setAdapter(mAdapter);
     }
