@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/chatDivider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -15,14 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:layout_constraintBottom_toTopOf="@+id/imageButton"
+            app:layout_constraintBottom_toTopOf="@id/chatDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/message">
-
-        </android.support.v7.widget.RecyclerView>
+            tools:listitem="@layout/message"></android.support.v7.widget.RecyclerView>
 
         <View
             android:layout_width="match_parent"
@@ -58,6 +57,7 @@
                 android:inputType="textPersonName"
                 android:selectAllOnFocus="false"
                 android:singleLine="false"
+                android:imeOptions="actionSend"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton"
                 app:layout_constraintHorizontal_bias="0.0"

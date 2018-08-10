@@ -110,6 +110,10 @@ public class ChatRoom extends AppCompatActivity {
         addMessage(message);
     }
 
+    public void testSend(View v) {
+
+    }
+
     public void test(View v){
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("IncomingMessage");
