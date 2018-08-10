@@ -1,6 +1,7 @@
 package com.example.jason.myapplication;
 
 import com.example.jason.myapplication.containers.Chat;
+import com.example.jason.myapplication.helpers.SavedInfo;
 import com.example.jason.myapplication.network.Account;
 
 import android.animation.ArgbEvaluator;
@@ -177,6 +178,16 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = mAuth.getCurrentUser();
         myAccount = new Account(user.getUid());
+        SavedInfo.getInstance().load(this);
+        Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
+    }
+
+    public void test(View v){
+        Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
+        SavedInfo.getInstance().EUConsent = true;
+        SavedInfo.getInstance().save(this);
+
+        SavedInfo.getInstance().load(this);
     }
 
     @Override
