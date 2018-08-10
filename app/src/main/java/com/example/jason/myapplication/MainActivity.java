@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
     private Account myAccount;
     private MainActivity.MyBroadRequestReceiver receiver;
+    private FirebaseAuth mAuth;
 
 
     public void testNotificationClick(View v) {
@@ -154,11 +155,27 @@ public class MainActivity extends AppCompatActivity {
         start.start();
         //END OF LOGIN
 
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInAnonymously().addOnCompleteListener( this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInAnonymously:success");
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    myAccount = new Account(user.getUid());
+                } else {
+                    Log.w(TAG, "signInAnonymously:failure", task.getException());
+                    //Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         IntentFilter filter = new IntentFilter("MatchFound");
         receiver = new MainActivity.MyBroadRequestReceiver();
         registerReceiver( receiver, filter);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser();
         myAccount = new Account(user.getUid());
     }
 
