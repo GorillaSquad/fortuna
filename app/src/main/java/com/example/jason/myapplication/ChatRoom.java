@@ -88,6 +88,11 @@ public class ChatRoom extends AppCompatActivity {
 
         mAdapter = new ChatAdapter(chat.messages, match);
         mRecyclerView.setAdapter(mAdapter);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.smoothScrollToPosition(chat.messages.length);
     }
 
     @Override
