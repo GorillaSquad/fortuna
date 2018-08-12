@@ -1,6 +1,7 @@
 package com.example.jason.myapplication;
 
 import com.example.jason.myapplication.containers.Chat;
+import com.example.jason.myapplication.containers.Matches;
 import com.example.jason.myapplication.helpers.SavedInfo;
 import com.example.jason.myapplication.network.Account;
 
@@ -33,6 +34,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.inmobi.ads.InMobiBanner;
 import com.inmobi.sdk.InMobiSdk;
 
@@ -53,82 +55,55 @@ public class MainActivity extends AppCompatActivity {
     private MainActivity.MyBroadRequestReceiver receiver;
     private FirebaseAuth mAuth;
 
-
-    public void testNotificationClick(View v) {
-        Random rand = new Random();
-        int x = (rand.nextInt(99999) + 1);
-        sendNotification("Updated Notification", "This keeps updating! " + x, 234528947,"DEBUG_NOTIFICATION");
-    }
-
-    public void testNewNotificationClick(View v) {
-        Random rand = new Random();
-        int x = (rand.nextInt(99999) + 1);
-        sendNotification("New Notification", "This is a new notification! ID: " + x, x,"DEBUG_NOTIFICATION");
-    }
-
     boolean joinPress;
+    int green   = 0xFF99CC00;
+    int red     = 0xFFEC1F43;
+    int orange  = 0xFFe76e18;
+    int buttonColour = green;
     public void startQueue(View v) {
 
         int colorStart = 0xFF99CC00;
         int colorEnd = 0xFFEC1F43;
-        ValueAnimator queueAnimation = ObjectAnimator.ofInt(v,
-                "backgroundColor", colorStart, colorEnd);
-        queueAnimation.setDuration(100);
-        queueAnimation.setEvaluator(new ArgbEvaluator());
 
         Button queueBtn = (Button)findViewById(R.id.joinBtn);
-        myAccount.joinQueue();
 
-        if (myAccount.isInQueue() && !joinPress) {
-            queueAnimation.start();
-            queueBtn.setText("In Queue!");
+
+        if (!joinPress) {
+            myAccount.joinQueue();
             joinPress = true;
             Log.d("queueJoined", "Joined");
+            switchButton("leaveQueue");
         } else if (joinPress) {
-            queueAnimation.reverse();
             myAccount.leaveQueue();
-            queueBtn.setText("Join");
             joinPress = false;
             Log.d("Queue Left", "Left");
+            switchButton("joinQueue");
         }
+
     }
 
-    public void sendNotification(String textTitle, String textContent, int notificationID, String channelID) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelID)
-                .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
-                .setContentTitle(textTitle)
-                .setContentText(textContent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+    View.OnClickListener startQueue2 = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Button queueBtn = (Button)findViewById(R.id.joinBtn);
 
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(notificationID,  mBuilder.build());
-    }
+            if (!joinPress) {
+                myAccount.joinQueue();
+                joinPress = true;
+                Log.d("queueJoined", "Joined");
+                switchButton("leaveQueue");
+            } else if (joinPress) {
+                myAccount.leaveQueue();
+                joinPress = false;
+                Log.d("Queue Left", "Left");
+                switchButton("joinQueue");
+            }
 
-    public void createNotificationChannel(String channelName, String channelDesc, String channelID) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = channelName;
-            String description = channelDesc;
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(channelID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
         }
-        else{
-            //TODO Test on lower sdk to make sure this doesn't need to be handled
-        }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Create all channels, must before sending any notification
-        createNotificationChannel("Debug", "Debug notifications for development", "DEBUG_NOTIFICATION");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -154,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        Log.d(TAG, "test5");
         mAuth.signInAnonymously().addOnCompleteListener( this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -171,21 +147,80 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("MatchFound");
         receiver = new MainActivity.MyBroadRequestReceiver();
         registerReceiver( receiver, filter);
-
         FirebaseUser user = mAuth.getCurrentUser();
         myAccount = new Account(user.getUid());
 
+        Log.d(TAG, myAccount.getMatches().matches.length + " MATCHES");
         // LOGIN
+
         StartUp start = new StartUp(this);
         start.start();
         //END OF LOGIN
 
         SavedInfo.getInstance().load(this);
-        Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
+        Log.d(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
+
+
+    }
+
+    private void switchButton(String state) {
+        int colour = 0;
+        Button queueBtn = (Button) findViewById(R.id.joinBtn);
+        switch(state){
+            case "joinQueue":
+                colour = green;
+                queueBtn.setText("Join");
+                break;
+            case "leaveQueue":
+                colour = red;
+                queueBtn.setText("In Queue!");
+                break;
+            case "joinChat":
+                colour = orange;
+                queueBtn.setText("Enter Chat");
+                break;
+        }
+        ValueAnimator queueAnimation = ObjectAnimator.ofInt(queueBtn, "backgroundColor", buttonColour, colour);
+        queueAnimation.setDuration(100);
+        queueAnimation.setEvaluator(new ArgbEvaluator());
+        queueAnimation.start();
+        buttonColour = colour;
+    }
+
+    public void onResume(){
+
+        final Matches.Match[] matches = myAccount.getMatches().matches;
+        int endColor = 0;
+
+        Log.d(TAG, matches.length + " TEST");
+        Button queueBtn = (Button) findViewById(R.id.joinBtn);
+        if(matches.length > 0) {
+            switchButton("joinChat");
+            queueBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Gson gson = new Gson();
+                    String match = gson.toJson(matches[0]);
+                    //String matchId = matches[0].matchedWith;
+                    startChat(match);
+                }
+            });
+        }else if(myAccount.isInQueue()){
+            joinPress = true;
+            switchButton("leaveQueue");
+            queueBtn.setOnClickListener(startQueue2);
+        }else{
+            joinPress = false;
+            switchButton("joinQueue");
+            queueBtn.setOnClickListener(startQueue2);
+        }
+
+        super.onResume();
+
     }
 
     public void test(View v){
-        Log.w(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
+        Log.d(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
         SavedInfo.getInstance().EUConsent = true;
         SavedInfo.getInstance().save(this);
     }
@@ -206,10 +241,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void startChat(String match){
+    public void startChat(String match) {
         Intent chatIntent = new Intent(this, ChatRoom.class);
         chatIntent.putExtra("match", match);
-        Log.d(TAG, match);
         startActivity(chatIntent);
     }
 }

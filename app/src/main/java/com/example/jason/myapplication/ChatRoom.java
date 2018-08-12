@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.example.jason.myapplication.containers.Chat;
+import com.example.jason.myapplication.containers.Matches;
 import com.example.jason.myapplication.network.Account;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +39,7 @@ public class ChatRoom extends AppCompatActivity {
 
     private Chat chat;
     private String match;
+    private String matchId;
 
     public class MyBroadRequestReceiver extends BroadcastReceiver {
         @Override
@@ -56,6 +59,7 @@ public class ChatRoom extends AppCompatActivity {
 
         ((ChatAdapter)mAdapter).updateData(messageList.toArray(new Chat.ChatMessage[0]));
         mAdapter.notifyDataSetChanged();
+        mRecyclerView.smoothScrollToPosition(messages.length);
     }
 
     @Override
@@ -71,8 +75,17 @@ public class ChatRoom extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myAccount = new Account(user.getUid());
         Intent incomingIntent = getIntent();
-        match = incomingIntent.getStringExtra("match");
-        chat = myAccount.getChatWith(match);
+        String matchJson = incomingIntent.getStringExtra("match");
+        Log.d("JSON", matchJson);
+        Gson gson = new Gson();
+        Matches.Match m = gson.fromJson(matchJson, Matches.Match.class);
+        if(m.deviceID.equalsIgnoreCase(user.getUid())){
+            match = m.matchedWith;
+        }else{
+            match = m.deviceID;
+        }
+        matchId = m.id;
+        chat = myAccount.getChatWith(m.id);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.chatRecyclerView);
 
@@ -93,10 +106,18 @@ public class ChatRoom extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.smoothScrollToPosition(chat.messages.length);
+
+
     }
 
     @Override
+    public void onStop() {
+        Log.d("DESTROY", "stopped chat room");
+        super.onStop();
+    }
+    @Override
     public void onDestroy() {
+        Log.d("DESTROY", "closed chat room");
         this.unregisterReceiver(receiver);
         super.onDestroy();
     }
@@ -104,7 +125,7 @@ public class ChatRoom extends AppCompatActivity {
     public void sendMessage(View v) {
         EditText input = findViewById(R.id.editText);
         String msg = input.getText().toString();
-        myAccount.sendMessageTo(match, msg);
+        myAccount.sendMessageTo(match,matchId, msg);
         input.setText("");
 
         Chat.ChatMessage message = new Chat().new ChatMessage();
@@ -115,13 +136,15 @@ public class ChatRoom extends AppCompatActivity {
         addMessage(message);
     }
 
-    public void testSend(View v) {
-
+    public void leaveChat(View v) {
+        myAccount.sendMessageTo(match, matchId,"/leave");
+        Chat.ChatMessage message = new Chat().new ChatMessage();
+        message.message = "/leave";
+        message.to = match;
+        message.from = "";
+        message.timestamp = (System.currentTimeMillis()/1000)+"";
+        addMessage(message);
     }
 
-    public void test(View v){
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("IncomingMessage");
-        sendBroadcast(broadcastIntent);
-    }
+
 }

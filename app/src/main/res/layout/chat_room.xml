@@ -41,7 +41,7 @@
                 android:layout_gravity="bottom|start"
                 android:layout_weight="3"
                 android:background="@android:color/white"
-                android:onClick="test"
+                android:onClick="leaveChat"
                 app:layout_constraintBottom_toBottomOf="@+id/editText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@android:drawable/btn_star_big_on" />

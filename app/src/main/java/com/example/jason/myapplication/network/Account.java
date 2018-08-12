@@ -38,15 +38,15 @@ public class Account {
         Chat c = new Chat();
         Gson gson = new Gson();
         try {
-            c = gson.fromJson(new WebHelper().execute("GET","GetMessages.php?from="+id+"&to="+other).get(), Chat.class);
+            c = gson.fromJson(new WebHelper().execute("GET","GetMessages.php?matchId="+other).get(), Chat.class);
         }catch(Exception e){
             e.printStackTrace();
         }
         return c;
     }
 
-    public void sendMessageTo(String to, String message){
-        new WebHelper().execute("GET","SendMessage.php?from="+id+"&to="+to+"&message="+message);
+    public void sendMessageTo(String to, String matchId, String message){
+        new WebHelper().execute("GET","SendMessage.php?from="+id+"&to="+to+"&matchId="+matchId+"&message="+message);
     }
 
     // QUEUE

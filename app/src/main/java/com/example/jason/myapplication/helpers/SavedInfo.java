@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 
 public class SavedInfo {
 
@@ -19,7 +20,7 @@ public class SavedInfo {
     }
 
     public boolean EUConsent;
-    public ChatInfo[] chatInfos;
+    public HashMap<String, ChatInfo> chatInfos;
 
     private static SavedInfo instance = null;
     public static SavedInfo getInstance()
@@ -34,12 +35,10 @@ public class SavedInfo {
         FileOutputStream outputStream;
         Gson gson = new Gson();
         String fileContents = gson.toJson(getInstance());
-        Log.d("TEST", fileContents);
         try {
             outputStream = c.openFileOutput(filename, Context.MODE_PRIVATE);
             outputStream.write(fileContents.getBytes());
             outputStream.close();
-            Log.d("TEST", outputStream.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

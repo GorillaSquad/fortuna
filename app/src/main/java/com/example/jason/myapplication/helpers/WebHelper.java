@@ -30,7 +30,7 @@ public class WebHelper  extends AsyncTask<String, Void, String> {
         try {
             URL url = new URL("http://www.gorillasquad.ca/chatrandom/"+page);
 
-
+            Log.d("WEBSITE", url.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
             conn.setRequestMethod("GET");

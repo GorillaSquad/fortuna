@@ -35,6 +35,8 @@ public class Receiver extends FirebaseMessagingService {
                 broadcastIntent.putExtra("message", incomingMessage);
                 sendBroadcast(broadcastIntent);
             }
+
+
         }
 
         // Check if message contains a notification payload.

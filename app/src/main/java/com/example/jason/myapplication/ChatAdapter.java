@@ -1,5 +1,6 @@
 package com.example.jason.myapplication;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,6 +60,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         TextView textView = holder.view.findViewById(R.id.messageText);
         textView.setText(mDataset[position].message);
         LinearLayout container = (LinearLayout) holder.view.findViewById(R.id.messageContainer);
+
+        if(mDataset[position].message.equals("/leave")) {
+            container.setGravity(Gravity.CENTER);
+            textView.setBackgroundResource(R.drawable.message_important);
+            textView.setTypeface(null, Typeface.BOLD);
+            textView.setText("A user has ended the chat.");
+            return;
+        }
+
+
         if(!mDataset[position].from.equals(match)){
             container.setGravity(Gravity.RIGHT);
             textView.setBackgroundResource(R.drawable.message_bubble_send);
