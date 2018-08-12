@@ -10,9 +10,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class Receiver extends FirebaseMessagingService {
 
+    NotificationGorilla nGorilla = new NotificationGorilla();
     String TAG = "Receiver";
-
-
 
 
     @Override
@@ -20,7 +19,6 @@ public class Receiver extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
             String message = remoteMessage.getData().get("message");
             if(message.startsWith("match:")) {
                 String match = message.substring("match: ".length());
@@ -34,6 +32,7 @@ public class Receiver extends FirebaseMessagingService {
                 broadcastIntent.setAction("IncomingMessage");
                 broadcastIntent.putExtra("message", incomingMessage);
                 sendBroadcast(broadcastIntent);
+                nGorilla.messageToNotification(incomingMessage, this);
             }
 
 
