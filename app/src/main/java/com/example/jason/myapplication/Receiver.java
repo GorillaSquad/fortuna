@@ -10,9 +10,13 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class Receiver extends FirebaseMessagingService {
 
-    NotificationGorilla nGorilla = new NotificationGorilla();
+    NotificationGorilla nGorilla;
     String TAG = "Receiver";
 
+    public Receiver() {
+        super();
+        nGorilla = new NotificationGorilla();
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

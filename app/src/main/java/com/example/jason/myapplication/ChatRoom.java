@@ -105,7 +105,8 @@ public class ChatRoom extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.smoothScrollToPosition(chat.messages.length);
+        if(chat.messages != null)
+            mRecyclerView.smoothScrollToPosition(chat.messages.length);
 
 
     }

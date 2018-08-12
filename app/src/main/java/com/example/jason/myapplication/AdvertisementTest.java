@@ -3,6 +3,7 @@ package com.example.jason.myapplication;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.inmobi.ads.InMobiBanner;
@@ -20,13 +21,13 @@ public class AdvertisementTest extends AppCompatActivity {
 
         InMobiBanner bannerAd = new InMobiBanner(this, 1531708574428L);
 
-        RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.banner);
-        RelativeLayout.LayoutParams bannerLp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        bannerLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        bannerLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        LinearLayout adContainer = (LinearLayout) findViewById(R.id.ad_container);
+        LinearLayout.LayoutParams bannerLp = new LinearLayout.LayoutParams(950, 900);
+        //bannerLp.
         adContainer.addView(bannerAd,bannerLp);
-        //bannerAd.load();
-
         bannerAd.load();
+
+        InMobiBanner bannerAd2 = (InMobiBanner)findViewById(R.id.banner);
+        //bannerAd2.load();
     }
 }

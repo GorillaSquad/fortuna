@@ -54,35 +54,15 @@ public class MainActivity extends AppCompatActivity {
     private Account myAccount;
     private MainActivity.MyBroadRequestReceiver receiver;
     private FirebaseAuth mAuth;
+    InMobiBanner bannerAd;
 
     boolean joinPress;
     int green   = 0xFF99CC00;
     int red     = 0xFFEC1F43;
     int orange  = 0xFFe76e18;
     int buttonColour = green;
-    public void startQueue(View v) {
 
-        int colorStart = 0xFF99CC00;
-        int colorEnd = 0xFFEC1F43;
-
-        Button queueBtn = (Button)findViewById(R.id.joinBtn);
-
-
-        if (!joinPress) {
-            myAccount.joinQueue();
-            joinPress = true;
-            Log.d("queueJoined", "Joined");
-            switchButton("leaveQueue");
-        } else if (joinPress) {
-            myAccount.leaveQueue();
-            joinPress = false;
-            Log.d("Queue Left", "Left");
-            switchButton("joinQueue");
-        }
-
-    }
-
-    View.OnClickListener startQueue2 = new View.OnClickListener() {
+    View.OnClickListener startQueue = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Button queueBtn = (Button)findViewById(R.id.joinBtn);
@@ -117,50 +97,30 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         InMobiSdk.init(this, "36567d23a95f40d286f3abf52bb96720", consentObject);
-        InMobiBanner bannerAd = new InMobiBanner(this, 1531708574428L);
+        bannerAd = new InMobiBanner(this, 1531708574428L);
 
         RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.banner);
         RelativeLayout.LayoutParams bannerLp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         bannerLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         bannerLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         adContainer.addView(bannerAd,bannerLp);
-        bannerAd.load();
 
-
-
-        mAuth = FirebaseAuth.getInstance();
-        Log.d(TAG, "test5");
-        mAuth.signInAnonymously().addOnCompleteListener( this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "signInAnonymously:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    myAccount = new Account(user.getUid());
-                } else {
-                    Log.w(TAG, "signInAnonymously:failure", task.getException());
-                    //Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        IntentFilter filter = new IntentFilter("MatchFound");
-        receiver = new MainActivity.MyBroadRequestReceiver();
-        registerReceiver( receiver, filter);
-        FirebaseUser user = mAuth.getCurrentUser();
-        myAccount = new Account(user.getUid());
-
-        Log.d(TAG, myAccount.getMatches().matches.length + " MATCHES");
         // LOGIN
-
         StartUp start = new StartUp(this);
         start.start();
         //END OF LOGIN
 
+        IntentFilter filter = new IntentFilter("MatchFound");
+        receiver = new MainActivity.MyBroadRequestReceiver();
+        registerReceiver( receiver, filter);
+
+
         SavedInfo.getInstance().load(this);
         Log.d(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
 
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d(TAG,user.getUid());
+        myAccount = new Account(user.getUid());
     }
 
     private void switchButton(String state) {
@@ -187,14 +147,17 @@ public class MainActivity extends AppCompatActivity {
         buttonColour = colour;
     }
 
-    public void onResume(){
-
+    public void onResume() {
+        if (myAccount == null) {
+            Log.d(TAG, "myAccount is null");
+            super.onResume();
+            return;
+        }
         final Matches.Match[] matches = myAccount.getMatches().matches;
-        int endColor = 0;
 
-        Log.d(TAG, matches.length + " TEST");
-        Button queueBtn = (Button) findViewById(R.id.joinBtn);
-        if(matches.length > 0) {
+
+        Button queueBtn = findViewById(R.id.joinBtn);
+        if (matches.length > 0) {
             switchButton("joinChat");
             queueBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -205,19 +168,19 @@ public class MainActivity extends AppCompatActivity {
                     startChat(match);
                 }
             });
-        }else if(myAccount.isInQueue()){
+        } else if (myAccount.isInQueue()) {
             joinPress = true;
             switchButton("leaveQueue");
-            queueBtn.setOnClickListener(startQueue2);
-        }else{
+            queueBtn.setOnClickListener(startQueue);
+        } else {
             joinPress = false;
             switchButton("joinQueue");
-            queueBtn.setOnClickListener(startQueue2);
+            queueBtn.setOnClickListener(startQueue);
         }
-
+        bannerAd.load();
         super.onResume();
-
     }
+
 
     public void test(View v){
         Log.d(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
