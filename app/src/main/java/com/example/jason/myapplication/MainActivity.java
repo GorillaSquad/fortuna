@@ -105,10 +105,27 @@ public class MainActivity extends AppCompatActivity {
         bannerLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
         adContainer.addView(bannerAd,bannerLp);
 
-        // LOGIN
-        StartUp start = new StartUp(this);
-        start.start();
-        //END OF LOGIN
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        mAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInAnonymously:success");
+                    user = mAuth.getCurrentUser();
+                    myAccount = new Account(user.getUid());
+                    myAccount.login();
+                } else {
+                    Log.w(TAG, "signInAnonymously:failure", task.getException());
+                    //Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        if(user != null) {
+            myAccount = new Account(user.getUid());
+        }
 
         IntentFilter filter = new IntentFilter("MatchFound");
         receiver = new MainActivity.MyBroadRequestReceiver();
@@ -118,10 +135,7 @@ public class MainActivity extends AppCompatActivity {
         SavedInfo.getInstance().load(this);
         Log.d(TAG, "CONSENT " + SavedInfo.getInstance().EUConsent);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.d(TAG,user.getUid());
-        if(user != null)
-            myAccount = new Account(user.getUid());
+
     }
 
     private void switchButton(String state) {
@@ -149,10 +163,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onResume() {
+        Button queueBtn = findViewById(R.id.joinBtn);
         if (myAccount == null) {
+            queueBtn.setOnClickListener(startQueue);
             if(user != null){
                 myAccount = new Account(user.getUid());
-            }else {
+            } else {
                 Log.d(TAG, "myAccount is null");
                 super.onResume();
                 return;
@@ -161,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         final Matches.Match[] matches = myAccount.getMatches().matches;
 
 
-        Button queueBtn = findViewById(R.id.joinBtn);
+
         if (matches.length > 0) {
             switchButton("joinChat");
             queueBtn.setOnClickListener(new View.OnClickListener() {

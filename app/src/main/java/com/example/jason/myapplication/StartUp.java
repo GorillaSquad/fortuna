@@ -36,20 +36,7 @@ public class StartUp {
     }
 
     public void firebaseLogin() {
-        mAuth.signInAnonymously().addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
 
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "signInAnonymously:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    loginAccount(user.getUid());
-                } else {
-                    Log.w(TAG, "signInAnonymously:failure", task.getException());
-                    //Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     public void loginAccount(String accountID) {
