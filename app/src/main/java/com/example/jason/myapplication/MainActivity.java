@@ -120,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d(TAG,user.getUid());
-        myAccount = new Account(user.getUid());
+        if(user != null)
+            myAccount = new Account(user.getUid());
     }
 
     private void switchButton(String state) {
@@ -149,9 +150,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume() {
         if (myAccount == null) {
-            Log.d(TAG, "myAccount is null");
-            super.onResume();
-            return;
+            if(user != null){
+                myAccount = new Account(user.getUid());
+            }else {
+                Log.d(TAG, "myAccount is null");
+                super.onResume();
+                return;
+            }
         }
         final Matches.Match[] matches = myAccount.getMatches().matches;
 
