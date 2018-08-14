@@ -1,7 +1,11 @@
 package com.example.jason.myapplication;
 
+import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import com.example.jason.myapplication.containers.Chat;
 import org.w3c.dom.Text;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+
     private Chat.ChatMessage[] mDataset;
     private String match;
 
@@ -50,7 +55,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
-
+    public static int dpToPx(int dp)
+    {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -69,7 +77,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             return;
         }
 
-
+        textView.setTypeface(null, Typeface.NORMAL);
         if(!mDataset[position].from.equals(match)){
             container.setGravity(Gravity.RIGHT);
             textView.setBackgroundResource(R.drawable.message_bubble_send);
@@ -77,7 +85,46 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             container.setGravity(Gravity.LEFT);
             textView.setBackgroundResource(R.drawable.message_bubble);
         }
+
+        GradientDrawable shape = (GradientDrawable) textView.getBackground().mutate();
+        handleCorners(position,shape, container);
     }
+
+    int CORNER_RADIUS = dpToPx(7);
+    private void handleCorners(int position, GradientDrawable shape, LinearLayout c) {
+        shape.setCornerRadii(toBottom);
+        if(position >= 1) {
+            if (!mDataset[position - 1].from.equals(match) && !mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(toBottom);
+            }else if (mDataset[position - 1].from.equals(match) && mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(fromBottom);
+            }
+        }
+        if(position <= mDataset.length-2) {
+            if (!mDataset[position + 1].from.equals(match) && !mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(toTop);
+            }else if (mDataset[position - 1].from.equals(match) && mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(fromTop);
+            }
+        }
+        if(position >= 1 && position <= mDataset.length-2) {
+            if (!mDataset[position - 1].from.equals(match) && !mDataset[position + 1].from.equals(match) && !mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(toMiddle);
+            }else if (mDataset[position - 1].from.equals(match) && mDataset[position + 1].from.equals(match) && mDataset[position].from.equals(match)) {
+                shape.setCornerRadii(fromMiddle);
+            }
+        }
+
+    }
+
+    private float[] fromTop = new float[]{CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,0f,0f};
+    private float[] fromMiddle = new float[]{0f,0f,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,0f,0f};
+    private float[] fromBottom = new float[]{0f,0f,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS};
+
+    private float[] toTop = new float[]{CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,0f,0f,CORNER_RADIUS,CORNER_RADIUS};
+    private float[] toMiddle = new float[]{CORNER_RADIUS,CORNER_RADIUS,0f,0f,0f,0f,CORNER_RADIUS,CORNER_RADIUS};
+    private float[] toBottom = new float[]{CORNER_RADIUS,CORNER_RADIUS,0f,0f,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS,CORNER_RADIUS};
+    private float[] test = new float[]{0,0,0f,0f,0,0,0,0};
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override

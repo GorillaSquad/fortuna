@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.jason.myapplication.containers.Chat;
@@ -52,8 +55,23 @@ public class ChatRoom extends AppCompatActivity {
     }
 
     public void addMessage(Chat.ChatMessage message) {
+        if(message.message.equalsIgnoreCase("/leave"))
+        {
+            Log.d("TEST", "LEAVE");
+            EditText input = findViewById(R.id.editText);
+            ImageButton sendButton = findViewById(R.id.sendButton);
+            ImageButton endButton = findViewById(R.id.endButton);
+            input.setEnabled(false);
+            sendButton.setOnClickListener(null);
+            endButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NavUtils.navigateUpFromSameTask(ChatRoom.this);
+                }
+            });
+        }
         Chat.ChatMessage[] messages = ((ChatAdapter)mAdapter).getData();
-        ArrayList<Chat.ChatMessage> messageList = new ArrayList<Chat.ChatMessage>(Arrays.asList(messages));
+        ArrayList<Chat.ChatMessage> messageList = new ArrayList<>(Arrays.asList(messages));
 
         messageList.add(message);
 
@@ -62,11 +80,23 @@ public class ChatRoom extends AppCompatActivity {
         mRecyclerView.smoothScrollToPosition(messages.length);
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_room);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         IntentFilter filter = new IntentFilter("IncomingMessage");
         receiver = new MyBroadRequestReceiver();

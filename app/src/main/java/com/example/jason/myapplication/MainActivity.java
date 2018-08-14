@@ -65,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener startQueue = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            if(myAccount == null){
+                Toast.makeText(MainActivity.this,"Connecting to server. Try again in a few seconds.",Toast.LENGTH_SHORT);
+                return;
+            }
+
             Button queueBtn = (Button)findViewById(R.id.joinBtn);
 
             if (!joinPress) {
@@ -117,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     user = mAuth.getCurrentUser();
                     myAccount = new Account(user.getUid());
                     myAccount.login();
+                    refresh();
                 } else {
                     Log.w(TAG, "signInAnonymously:failure", task.getException());
                     //Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
@@ -162,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         buttonColour = colour;
     }
 
-    public void onResume() {
+    public void refresh(){
         Button queueBtn = findViewById(R.id.joinBtn);
         if (myAccount == null) {
             queueBtn.setOnClickListener(startQueue);
@@ -199,6 +205,10 @@ public class MainActivity extends AppCompatActivity {
             queueBtn.setOnClickListener(startQueue);
         }
         bannerAd.load();
+    }
+
+    public void onResume() {
+        refresh();
         super.onResume();
     }
 
