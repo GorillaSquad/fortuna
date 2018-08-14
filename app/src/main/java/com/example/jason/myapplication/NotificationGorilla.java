@@ -1,10 +1,7 @@
 package com.example.jason.myapplication;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.app.RemoteInput;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -23,7 +20,6 @@ import java.util.Random;
 public class NotificationGorilla {
 
 
-
     private Map<String, Integer> notificationIDMapping = new HashMap<>();
     private static final String KEY_TEXT_REPLY = "key_text_reply";
     String TAG = "Notification";
@@ -40,10 +36,10 @@ public class NotificationGorilla {
             }while(notificationIDMapping.containsValue(idToAssign));
             notificationIDMapping.put(message.from, idToAssign);
         }
-        sendNotification(message.from.substring(0,3), message.message, notificationIDMapping.get(message.from), "USER_MESSAGE", context);
+        sendNotification(message.from.substring(0,3), message.message, notificationIDMapping.get(message.from), "USER_MESSAGE", context, Long.parseLong(message.timestamp));
     }
 
-
+    //Somehow Gets the reply button message text
     private CharSequence getMessageText(Intent intent) {
         if (Build.VERSION.SDK_INT >= 20) {
 
@@ -56,23 +52,50 @@ public class NotificationGorilla {
         return null;
     }
 
-    public void sendNotification(String textTitle, String textContent, int notificationID, String channelID, Context context) {
+    public void sendNotification(String senderName, String textContent, int notificationID, String channelID, Context context, long timestamp) {
+
+        // notificationId is a unique int for each notification that you must define
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        if(Build.VERSION.SDK_INT >= 26){ //Messaging type of notifications
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
+                    .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
+                    .setContentTitle(senderName)
+                    .setContentText(textContent)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            mBuilder.setStyle(new NotificationCompat.MessagingStyle("Me")
+                    .setConversationTitle("Team lunch")
+                    .addMessage("Hi", timestamp, null) // Pass in null for user.
+                    .addMessage("What's up?", timestamp, "Coworker")
+                    .addMessage("Not much", timestamp, null)
+                    .addMessage("How about lunch?", timestamp, "Coworker"));
+
+            notificationManager.notify(notificationID,  mBuilder.build());
 
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
-                .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
-                .setContentTitle(textTitle)
-                .setContentText(textContent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        }else{  //Old type of notifications
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
+                    .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
+                    .setContentTitle(senderName)
+                    .setContentText(textContent)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            notificationManager.notify(notificationID,  mBuilder.build());
+        }
 
 
 
+
+
+        //TODO Reply button needs work
         //This is the reply button (only works on apu level 20 or higher)
-        if (Build.VERSION.SDK_INT >= 20) {
+
+        /*if (Build.VERSION.SDK_INT >= 20) {
             RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
                     .setLabel("REPLY")
                     .build();
-            /*
             PendingIntent replyPendingIntent =
                     PendingIntent.getBroadcast(context,
                             conversation.getConversationId(),
@@ -85,17 +108,14 @@ public class NotificationGorilla {
                             "REPLY2", replyPendingIntent)
                             .addRemoteInput(remoteInput)
                             .build();
-        */
-        }
+        }*/
 
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-
-
-
-
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(notificationID,  mBuilder.build());
     }
+
+
+
+
+
+
 }
