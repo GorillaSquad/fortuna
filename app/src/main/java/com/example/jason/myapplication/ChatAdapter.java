@@ -92,7 +92,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     int CORNER_RADIUS = dpToPx(7);
     private void handleCorners(int position, GradientDrawable shape, LinearLayout c) {
-        shape.setCornerRadii(toBottom);
         if(position >= 1) {
             if (!mDataset[position - 1].from.equals(match) && !mDataset[position].from.equals(match)) {
                 shape.setCornerRadii(toBottom);
@@ -103,7 +102,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         if(position <= mDataset.length-2) {
             if (!mDataset[position + 1].from.equals(match) && !mDataset[position].from.equals(match)) {
                 shape.setCornerRadii(toTop);
-            }else if (mDataset[position - 1].from.equals(match) && mDataset[position].from.equals(match)) {
+            }else if (mDataset[position + 1].from.equals(match) && mDataset[position].from.equals(match)) {
                 shape.setCornerRadii(fromTop);
             }
         }
