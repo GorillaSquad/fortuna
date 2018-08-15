@@ -13,6 +13,7 @@ import android.util.Log;
 import com.example.jason.myapplication.containers.Chat;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -23,6 +24,7 @@ public class NotificationGorilla {
     private Map<String, Integer> notificationIDMapping = new HashMap<>();
     private static final String KEY_TEXT_REPLY = "key_text_reply";
     String TAG = "Notification";
+    private ArrayList<Chat.ChatMessage> recentMessages = new ArrayList<>();
 
     public void messageToNotification(String incomingMessage, Context context){
 
@@ -36,7 +38,8 @@ public class NotificationGorilla {
             }while(notificationIDMapping.containsValue(idToAssign));
             notificationIDMapping.put(message.from, idToAssign);
         }
-        sendNotification(message.from.substring(0,3), message.message, notificationIDMapping.get(message.from), "USER_MESSAGE", context, Long.parseLong(message.timestamp));
+        recentMessages.add(message);
+        sendNotification("Stranger", message.message, notificationIDMapping.get(message.from), "USER_MESSAGE", context, Long.parseLong(message.timestamp));
     }
 
     //Somehow Gets the reply button message text
@@ -57,36 +60,23 @@ public class NotificationGorilla {
         // notificationId is a unique int for each notification that you must define
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-        if(Build.VERSION.SDK_INT >= 26){ //Messaging type of notifications
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
+                .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
+                .setContentTitle(senderName)
+                .setContentText(textContent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+        notificationManager.notify(notificationID,  mBuilder.build());
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
-                    .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
-                    .setContentTitle(senderName)
-                    .setContentText(textContent)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        if(Build.VERSION.SDK_INT >= 20) { //Messaging type of notifications
 
-            mBuilder.setStyle(new NotificationCompat.MessagingStyle("Me")
-                    .setConversationTitle("Team lunch")
-                    .addMessage("Hi", timestamp, null) // Pass in null for user.
-                    .addMessage("What's up?", timestamp, "Coworker")
-                    .addMessage("Not much", timestamp, null)
-                    .addMessage("How about lunch?", timestamp, "Coworker"));
+            NotificationCompat.MessagingStyle messageStyle = new NotificationCompat.MessagingStyle("Me");
 
-            notificationManager.notify(notificationID,  mBuilder.build());
-
-
-        }else{  //Old type of notifications
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
-                    .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
-                    .setContentTitle(senderName)
-                    .setContentText(textContent)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            notificationManager.notify(notificationID,  mBuilder.build());
+           for(Chat.ChatMessage s:recentMessages)
+            messageStyle.addMessage(s.message, Long.parseLong(s.timestamp), "Stranger");
+            mBuilder.setStyle(messageStyle);
         }
 
-
-
+        notificationManager.notify(notificationID, mBuilder.build());
 
 
         //TODO Reply button needs work
