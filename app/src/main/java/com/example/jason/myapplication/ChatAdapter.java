@@ -52,6 +52,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         if(myDataset == null)
             myDataset = new Chat.ChatMessage[0];
         mDataset = myDataset;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -102,10 +103,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             bannerLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             bannerLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
             adContainer.addView(bannerAd,bannerLp);
-
             bannerAd.load();
-
-            Log.d("ADAPTER", bannerAd.getAdMetaInfo().toString());
+            //Log.d("ADAPTER", bannerAd.getAdMetaInfo().toString());
         }
 
         ViewHolder vh = new ViewHolder(v);
@@ -122,6 +121,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         // - replace the contents of the view with that element
 
         if (mDataset[position].message.equals("/advertisement")) {
+            InMobiBanner banner = (InMobiBanner)  holder.view.findViewById(R.id.banner);
+            //InMobiBanner bannerAd = (InMobiBanner) v.findViewById(R.id.banner);
+            //banner.load();
             return;
         }
 
@@ -173,10 +175,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             }
         }
         if(position >= 1 && position <= mDataset.length-2) {
-            if (!mDataset[position - 1].from.equals(match) && !mDataset[position + 1].from.equals(match) && !mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(toMiddle);
-            }else if (mDataset[position - 1].from.equals(match) && mDataset[position + 1].from.equals(match) && mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(fromMiddle);
+            if ( mDataset[position - 1].from.equals(mDataset[position + 1].from) && mDataset[position - 1].from.equals(mDataset[position].from) ) {
+                if (!mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(toMiddle);
+                } else if (mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(fromMiddle);
+                }
             }
         }
 

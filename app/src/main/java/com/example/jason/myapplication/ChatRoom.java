@@ -81,8 +81,8 @@ public class ChatRoom extends AppCompatActivity {
         messageList.add(message);
 
         ((ChatAdapter)mAdapter).updateData(messageList.toArray(new Chat.ChatMessage[0]));
-        mAdapter.notifyDataSetChanged();
         mRecyclerView.smoothScrollToPosition(messages.length);
+        mAdapter.notifyDataSetChanged();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
