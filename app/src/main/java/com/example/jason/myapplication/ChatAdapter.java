@@ -155,17 +155,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private void handleCorners(int position, GradientDrawable shape, LinearLayout c) {
         c.setPadding(c.getPaddingLeft(), c.getPaddingTop(), c.getPaddingRight(), dpToPx(1));
         if(position >= 1) {
-            if (!mDataset[position - 1].from.equals(match) && !mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(toBottom);
-            }else if (mDataset[position - 1].from.equals(match) && mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(fromBottom);
+            if(mDataset[position - 1].from.equals(mDataset[position].from)) {
+                if (!mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(toBottom);
+                } else if (mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(fromBottom);
+                }
             }
         }
         if(position <= mDataset.length-2) {
-            if (!mDataset[position + 1].from.equals(match) && !mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(toTop);
-            }else if (mDataset[position + 1].from.equals(match) && mDataset[position].from.equals(match)) {
-                shape.setCornerRadii(fromTop);
+            if(mDataset[position + 1].from.equals(mDataset[position].from)) {
+                if (!mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(toTop);
+                } else if (mDataset[position].from.equals(match)) {
+                    shape.setCornerRadii(fromTop);
+                }
             }
         }
         if(position >= 1 && position <= mDataset.length-2) {
