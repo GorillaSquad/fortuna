@@ -15,18 +15,18 @@
     app:layout_constraintStart_toStartOf="parent">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Advertisement" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Advertisement" />
 
-        <com.inmobi.ads.InMobiBanner
-            tools:context="com.inmobi.samples.BannerXMLActivity"
-            android:id="@+id/banner"
-            android:layout_width="320dp"
-            android:layout_height="50dp"
-            ads:placementId="1531708574428"
-            ads:refreshInterval="60" />
+    <com.inmobi.ads.InMobiBanner
+        tools:context="com.inmobi.samples.BannerXMLActivity"
+        android:id="@+id/banner"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        ads:placementId="1531708574428"
+        ads:refreshInterval="60" />
 
 
 </LinearLayout>

@@ -103,6 +103,8 @@ public class ChatRoom extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        InMobiSdk.init(this, "36567d23a95f40d286f3abf52bb96720");
+
         IntentFilter filter = new IntentFilter("IncomingMessage");
         receiver = new MyBroadRequestReceiver();
         registerReceiver( receiver, filter);
@@ -147,7 +149,7 @@ public class ChatRoom extends AppCompatActivity {
         if(chat == null)
             chat = new Chat();
 
-        mAdapter = new ChatAdapter(chat.messages, match);
+        mAdapter = new ChatAdapter(chat.messages, match, this);
         mRecyclerView.setAdapter(mAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -194,7 +196,6 @@ public class ChatRoom extends AppCompatActivity {
                 .setMessage("Do you really want to end the chat?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int whichButton) {
                         sendLeave();
                     }})
