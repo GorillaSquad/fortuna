@@ -42,9 +42,11 @@
                 android:layout_weight="3"
                 android:background="@android:color/white"
                 android:onClick="leaveChat"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="@+id/editText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@android:drawable/btn_star_big_on" />
+                app:srcCompat="@drawable/ic_back_btn" />
 
             <EditText
                 android:id="@+id/editText"
