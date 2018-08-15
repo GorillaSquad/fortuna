@@ -45,6 +45,23 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         mDataset = myDataset;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        // Just as an example, return 0 or 2 depending on position
+        // Note that unlike in ListView adapters, types don't have to be contiguous
+        if(position == mDataset.length-1)
+            return 1;
+
+        if(position == 0)
+            return 2;
+
+        if(!mDataset[position-1].from.equals(mDataset[position].from)){
+            return 2;
+        }else{
+            return 0;
+        }
+    }
+
     // Create new views (invoked by the layout manager)
     @Override
     public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -52,6 +69,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         // create a new view
         //TextView v = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.message, parent, false);
+
+        if(viewType == 1) {
+            LinearLayout c = (LinearLayout) v.findViewById(R.id.messageContainer);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) c.getLayoutParams();
+            params.setMargins(0,0,0, dpToPx(17));
+        }else if(viewType == 2) {
+            LinearLayout c = (LinearLayout) v.findViewById(R.id.messageContainer);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) c.getLayoutParams();
+            params.setMargins(0,dpToPx(17),0, 0);
+        }
+
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -90,8 +118,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         handleCorners(position,shape, container);
     }
 
+
     int CORNER_RADIUS = dpToPx(7);
     private void handleCorners(int position, GradientDrawable shape, LinearLayout c) {
+        c.setPadding(c.getPaddingLeft(), c.getPaddingTop(), c.getPaddingRight(), dpToPx(1));
         if(position >= 1) {
             if (!mDataset[position - 1].from.equals(match) && !mDataset[position].from.equals(match)) {
                 shape.setCornerRadii(toBottom);
@@ -113,6 +143,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 shape.setCornerRadii(fromMiddle);
             }
         }
+
 
     }
 

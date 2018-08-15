@@ -57,7 +57,7 @@ public class NotificationGorilla {
         // notificationId is a unique int for each notification that you must define
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-        if(Build.VERSION.SDK_INT >= 26){ //Messaging type of notifications
+        if(Build.VERSION.SDK_INT >= 12){ //Messaging type of notifications
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
                     .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
@@ -74,9 +74,10 @@ public class NotificationGorilla {
 
             notificationManager.notify(notificationID,  mBuilder.build());
 
-
+            Log.d("NOTIFGORILLA", "NEW SDK " + Build.VERSION.SDK_INT);
         }else{  //Old type of notifications
 
+            Log.d("NOTIFGORILLA", "OLD SDK " + Build.VERSION.SDK_INT);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, channelID)
                     .setSmallIcon(R.drawable.common_google_signin_btn_text_dark)
                     .setContentTitle(senderName)
