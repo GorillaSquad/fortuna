@@ -67,8 +67,11 @@ public class NotificationGorilla {
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         notificationManager.notify(notificationID,  mBuilder.build());
 
+        Log.d("TEST", Build.VERSION.SDK_INT+"");
+
         if(Build.VERSION.SDK_INT >= 20) { //Messaging type of notifications
 
+            Log.d("TEST", Build.VERSION.SDK_INT+"");
             NotificationCompat.MessagingStyle messageStyle = new NotificationCompat.MessagingStyle("Me");
 
            for(Chat.ChatMessage s:recentMessages)

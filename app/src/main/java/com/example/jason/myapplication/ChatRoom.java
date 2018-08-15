@@ -2,19 +2,24 @@ package com.example.jason.myapplication;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.jason.myapplication.containers.Chat;
 import com.example.jason.myapplication.containers.Matches;
@@ -102,6 +107,19 @@ public class ChatRoom extends AppCompatActivity {
         receiver = new MyBroadRequestReceiver();
         registerReceiver( receiver, filter);
 
+        EditText editText = (EditText) findViewById(R.id.editText);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage(null);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         myAccount = new Account(user.getUid());
         Intent incomingIntent = getIntent();
@@ -156,6 +174,8 @@ public class ChatRoom extends AppCompatActivity {
     public void sendMessage(View v) {
         EditText input = findViewById(R.id.editText);
         String msg = input.getText().toString();
+        if(msg.replaceAll(" ", "").equals(""))
+            return;
         myAccount.sendMessageTo(match,matchId, msg);
         input.setText("");
 
@@ -168,6 +188,22 @@ public class ChatRoom extends AppCompatActivity {
     }
 
     public void leaveChat(View v) {
+
+        new AlertDialog.Builder(this)
+                .setTitle("End Chat")
+                .setMessage("Do you really want to end the chat?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        sendLeave();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+
+    }
+
+    private void sendLeave() {
         myAccount.sendMessageTo(match, matchId,"/leave");
         Chat.ChatMessage message = new Chat().new ChatMessage();
         message.message = "/leave";
@@ -176,6 +212,5 @@ public class ChatRoom extends AppCompatActivity {
         message.timestamp = (System.currentTimeMillis()/1000)+"";
         addMessage(message);
     }
-
 
 }

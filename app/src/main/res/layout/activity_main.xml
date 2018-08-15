@@ -11,7 +11,7 @@
         android:id="@+id/joinBtn"
         android:layout_width="217dp"
         android:layout_height="60dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="80dp"
         android:background="@android:color/holo_green_light"
         android:text="Join"
         android:textColor="@android:color/white"
@@ -32,6 +32,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_main_img_01" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="218dp"
+        android:layout_height="171dp"
+        android:layout_marginTop="240dp"
+
+        android:indeterminate="true"
+        android:indeterminateTint="#FFEC1F43"
+        android:indeterminateTintMode="src_atop"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"

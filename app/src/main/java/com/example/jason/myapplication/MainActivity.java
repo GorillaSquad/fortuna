@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -136,19 +137,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchButton(String state) {
         int colour = 0;
-        Button queueBtn = (Button) findViewById(R.id.joinBtn);
+        Button queueBtn = findViewById(R.id.joinBtn);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
         switch(state){
             case "joinQueue":
                 colour = green;
                 queueBtn.setText("Join");
+                progressBar.setVisibility(View.INVISIBLE);
                 break;
             case "leaveQueue":
                 colour = red;
                 queueBtn.setText("In Queue!");
+                progressBar.setVisibility(View.VISIBLE);
                 break;
             case "joinChat":
                 colour = orange;
                 queueBtn.setText("Enter Chat");
+                progressBar.setVisibility(View.INVISIBLE);
                 break;
         }
         ValueAnimator queueAnimation = ObjectAnimator.ofInt(queueBtn, "backgroundColor", buttonColour, colour);
