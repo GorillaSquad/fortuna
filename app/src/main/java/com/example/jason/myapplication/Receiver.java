@@ -1,21 +1,21 @@
 package com.example.jason.myapplication;
 
-import android.app.Service;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
+import com.example.jason.myapplication.containers.Chat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.ArrayList;
+
 public class Receiver extends FirebaseMessagingService {
 
-    NotificationGorilla nGorilla;
     String TAG = "Receiver";
 
     public Receiver() {
         super();
-        nGorilla = new NotificationGorilla();
+        Log.d(TAG, "Notification Gorilla: Reset arraylist");
     }
 
     @Override
@@ -30,13 +30,14 @@ public class Receiver extends FirebaseMessagingService {
                 broadcastIntent.setAction("MatchFound");
                 broadcastIntent.putExtra("match", match);
                 sendBroadcast(broadcastIntent);
+                NotificationGorilla.newMatchNotification(match, this);
             }else if(message.startsWith("message:")) {
                 String incomingMessage = message.substring("message: ".length());
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction("IncomingMessage");
                 broadcastIntent.putExtra("message", incomingMessage);
                 sendBroadcast(broadcastIntent);
-                nGorilla.messageToNotification(incomingMessage, this);
+                NotificationGorilla.messageToNotification(incomingMessage, this);
             }
 
 
